@@ -87,7 +87,7 @@ limitations under the License.
           </select>
         </div>
       </div>
-      <div class="control ui-activation">
+      <!-- <div class="control ui-activation">
         <label for="activations">Activation</label>
         <div class="select">
           <select id="activations">
@@ -133,7 +133,7 @@ limitations under the License.
             <option value="regression">Regression</option>
           </select>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 
@@ -141,7 +141,7 @@ limitations under the License.
   <div id="main-part" class="l--page">
 
     <!--  Data Column-->
-    <div class="column data">
+    <!-- <div class="column data">
       <h4>
         <span>Data</span>
       </h4>
@@ -191,7 +191,7 @@ limitations under the License.
             Regenerate
           </button>
       </div>
-    </div>
+    </div> -->
 
     <!-- Features Column -->
     <div class="column features">
@@ -241,7 +241,7 @@ limitations under the License.
 
     <!-- Hidden Layers Column -->
     <div class="column hidden-layers">
-      <h4>
+      <!-- <h4>
         <div class="ui-numHiddenLayers">
           <button id="add-layers" class="mdl-button mdl-js-button mdl-button--icon">
             <i class="material-icons">add</i>
@@ -252,29 +252,30 @@ limitations under the License.
         </div>
         <span id="num-layers"></span>
         <span id="layers-label"></span>
-      </h4>
+      </h4> -->
       <div class="bracket"></div>
     </div>
 
     <!-- Output Column -->
     <div class="column output">
-      <h4>Output</h4>
-      <div class="metrics">
-        <div class="output-stats ui-percTrainData">
-          <span>Test loss</span>
-          <div class="value" id="loss-test"></div>
+      <div style="margin-top: 100px; margin-left: 50px;">
+        <h4>Output</h4>
+        <div class="metrics">
+          <div class="output-stats ui-percTrainData">
+            <span>Test loss</span>
+            <div class="value" id="loss-test"></div>
+          </div>
+          <div class="output-stats train">
+            <span>Training loss</span>
+            <div class="value" id="loss-train"></div>
+          </div>
+          <div id="linechart"></div>
         </div>
-        <div class="output-stats train">
-          <span>Training loss</span>
-          <div class="value" id="loss-train"></div>
-        </div>
-        <div id="linechart"></div>
       </div>
-      <div id="heatmap"></div>
-      <div style="float:left;margin-top:20px">
+      <!-- <div id="heatmap"></div> -->
+      <!-- <div style="float:left;margin-top:20px">
         <div style="display:flex; align-items:center;">
 
-          <!-- Gradient color scale -->
           <div class="label" style="width:105px; margin-right: 10px">
             Colors shows data, neuron and weight values.
           </div>
@@ -302,7 +303,7 @@ limitations under the License.
             <span class="mdl-checkbox__label label">Discretize output</span>
           </label>
         </div>
-      </div>
+      </div> -->
     </div>
 
   </div>

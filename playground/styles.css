@@ -62,7 +62,7 @@ body {
 }
 
 .l--page {
-  width: 944px;
+  width: 90vw !important;
   margin-left: auto;
   margin-right: auto;
 }
@@ -784,7 +784,7 @@ g.column rect {
 /* Output column */
 
 .output.column {
-  width: 275px;
+  width: 475px;
 }
 
 .metrics {
@@ -798,8 +798,8 @@ g.column rect {
   position: absolute;
   top: 0;
   right: 0;
-  width: 50%;
-  height: 55px;
+  width: 70%;
+  height: 200px;
 }
 .metrics .train {
   color: #777;

@@ -201,48 +201,48 @@ function makeGUI() {
     oneStep();
   });
 
-  d3.select("#data-regen-button").on("click", () => {
-    generateData();
-    parametersChanged = true;
-  });
+  // d3.select("#data-regen-button").on("click", () => {
+  //   generateData();
+  //   parametersChanged = true;
+  // });
 
-  let dataThumbnails = d3.selectAll("canvas[data-dataset]");
-  dataThumbnails.on("click", function() {
-    let newDataset = datasets[this.dataset.dataset];
-    if (newDataset === state.dataset) {
-      return; // No-op.
-    }
-    state.dataset =  newDataset;
-    dataThumbnails.classed("selected", false);
-    d3.select(this).classed("selected", true);
-    generateData();
-    parametersChanged = true;
-    reset();
-  });
+  // let dataThumbnails = d3.selectAll("canvas[data-dataset]");
+  // dataThumbnails.on("click", function() {
+  //   let newDataset = datasets[this.dataset.dataset];
+  //   if (newDataset === state.dataset) {
+  //     return; // No-op.
+  //   }
+  //   state.dataset =  newDataset;
+  //   dataThumbnails.classed("selected", false);
+  //   d3.select(this).classed("selected", true);
+  //   generateData();
+  //   parametersChanged = true;
+  //   reset();
+  // });
 
-  let datasetKey = getKeyFromValue(datasets, state.dataset);
-  // Select the dataset according to the current state.
-  d3.select(`canvas[data-dataset=${datasetKey}]`)
-    .classed("selected", true);
+  // let datasetKey = getKeyFromValue(datasets, state.dataset);
+  // // Select the dataset according to the current state.
+  // d3.select(`canvas[data-dataset=${datasetKey}]`)
+  //   .classed("selected", true);
 
-  let regDataThumbnails = d3.selectAll("canvas[data-regDataset]");
-  regDataThumbnails.on("click", function() {
-    let newDataset = regDatasets[this.dataset.regdataset];
-    if (newDataset === state.regDataset) {
-      return; // No-op.
-    }
-    state.regDataset =  newDataset;
-    regDataThumbnails.classed("selected", false);
-    d3.select(this).classed("selected", true);
-    generateData();
-    parametersChanged = true;
-    reset();
-  });
+  // let regDataThumbnails = d3.selectAll("canvas[data-regDataset]");
+  // regDataThumbnails.on("click", function() {
+  //   let newDataset = regDatasets[this.dataset.regdataset];
+  //   if (newDataset === state.regDataset) {
+  //     return; // No-op.
+  //   }
+  //   state.regDataset =  newDataset;
+  //   regDataThumbnails.classed("selected", false);
+  //   d3.select(this).classed("selected", true);
+  //   generateData();
+  //   parametersChanged = true;
+  //   reset();
+  // });
 
-  let regDatasetKey = getKeyFromValue(regDatasets, state.regDataset);
-  // Select the dataset according to the current state.
-  d3.select(`canvas[data-regDataset=${regDatasetKey}]`)
-    .classed("selected", true);
+  // let regDatasetKey = getKeyFromValue(regDatasets, state.regDataset);
+  // // Select the dataset according to the current state.
+  // d3.select(`canvas[data-regDataset=${regDatasetKey}]`)
+  //   .classed("selected", true);
 
   d3.select("#add-layers").on("click", () => {
     if (state.numHiddenLayers >= 6) {
@@ -282,35 +282,35 @@ function makeGUI() {
   // Check/uncheck the checbox according to the current state.
   discretize.property("checked", state.discretize);
 
-  let percTrain = d3.select("#percTrainData").on("input", function() {
-    state.percTrainData = this.value;
-    d3.select("label[for='percTrainData'] .value").text(this.value);
-    generateData();
-    parametersChanged = true;
-    reset();
-  });
-  percTrain.property("value", state.percTrainData);
-  d3.select("label[for='percTrainData'] .value").text(state.percTrainData);
+  // let percTrain = d3.select("#percTrainData").on("input", function() {
+  //   state.percTrainData = this.value;
+  //   d3.select("label[for='percTrainData'] .value").text(this.value);
+  //   generateData();
+  //   parametersChanged = true;
+  //   reset();
+  // });
+  // percTrain.property("value", state.percTrainData);
+  // d3.select("label[for='percTrainData'] .value").text(state.percTrainData);
 
-  let noise = d3.select("#noise").on("input", function() {
-    state.noise = this.value;
-    d3.select("label[for='noise'] .value").text(this.value);
-    generateData();
-    parametersChanged = true;
-    reset();
-  });
-  let currentMax = parseInt(noise.property("max"));
-  if (state.noise > currentMax) {
-    if (state.noise <= 80) {
-      noise.property("max", state.noise);
-    } else {
-      state.noise = 50;
-    }
-  } else if (state.noise < 0) {
-    state.noise = 0;
-  }
-  noise.property("value", state.noise);
-  d3.select("label[for='noise'] .value").text(state.noise);
+  // let noise = d3.select("#noise").on("input", function() {
+  //   state.noise = this.value;
+  //   d3.select("label[for='noise'] .value").text(this.value);
+  //   generateData();
+  //   parametersChanged = true;
+  //   reset();
+  // });
+  // let currentMax = parseInt(noise.property("max"));
+  // if (state.noise > currentMax) {
+  //   if (state.noise <= 80) {
+  //     noise.property("max", state.noise);
+  //   } else {
+  //     state.noise = 50;
+  //   }
+  // } else if (state.noise < 0) {
+  //   state.noise = 0;
+  // }
+  // noise.property("value", state.noise);
+  // d3.select("label[for='noise'] .value").text(state.noise);
 
   let batchSize = d3.select("#batchSize").on("input", function() {
     state.batchSize = this.value;
@@ -434,12 +434,18 @@ function drawNode(cx: number, cy: number, nodeId: string, isInput: boolean,
     });
 
   // Draw the main rectangle.
-  nodeGroup.append("rect")
+  // nodeGroup.append("rect")
+  //   .attr({
+  //     x: 0,
+  //     y: 0,
+  //     width: RECT_SIZE,
+  //     height: RECT_SIZE,
+  //   });
+  nodeGroup.append("circle")
     .attr({
-      x: 0,
-      y: 0,
-      width: RECT_SIZE,
-      height: RECT_SIZE,
+      cx: RECT_SIZE / 2,
+      cy: RECT_SIZE / 2,
+      r: RECT_SIZE / 2
     });
   let activeOrNotClass = state[nodeId] ? "active" : "inactive";
   if (isInput) {
@@ -493,45 +499,45 @@ function drawNode(cx: number, cy: number, nodeId: string, isInput: boolean,
   }
 
   // Draw the node's canvas.
-  let div = d3.select("#network").insert("div", ":first-child")
-    .attr({
-      "id": `canvas-${nodeId}`,
-      "class": "canvas"
-    })
-    .style({
-      position: "absolute",
-      left: `${x + 3}px`,
-      top: `${y + 3}px`
-    })
-    .on("mouseenter", function() {
-      selectedNodeId = nodeId;
-      div.classed("hovered", true);
-      nodeGroup.classed("hovered", true);
-      updateDecisionBoundary(network, false);
-      heatMap.updateBackground(boundary[nodeId], state.discretize);
-    })
-    .on("mouseleave", function() {
-      selectedNodeId = null;
-      div.classed("hovered", false);
-      nodeGroup.classed("hovered", false);
-      updateDecisionBoundary(network, false);
-      heatMap.updateBackground(boundary[nn.getOutputNode(network).id],
-          state.discretize);
-    });
-  if (isInput) {
-    div.on("click", function() {
-      state[nodeId] = !state[nodeId];
-      parametersChanged = true;
-      reset();
-    });
-    div.style("cursor", "pointer");
-  }
-  if (isInput) {
-    div.classed(activeOrNotClass, true);
-  }
-  let nodeHeatMap = new HeatMap(RECT_SIZE, DENSITY / 10, xDomain,
-      xDomain, div, {noSvg: true});
-  div.datum({heatmap: nodeHeatMap, id: nodeId});
+  // let div = d3.select("#network").insert("div", ":first-child")
+  //   .attr({
+  //     "id": `canvas-${nodeId}`,
+  //     "class": "canvas"
+  //   })
+  //   .style({
+  //     position: "absolute",
+  //     left: `${x + 3}px`,
+  //     top: `${y + 3}px`
+  //   })
+  //   .on("mouseenter", function() {
+  //     selectedNodeId = nodeId;
+  //     div.classed("hovered", true);
+  //     nodeGroup.classed("hovered", true);
+  //     updateDecisionBoundary(network, false);
+  //     heatMap.updateBackground(boundary[nodeId], state.discretize);
+  //   })
+  //   .on("mouseleave", function() {
+  //     selectedNodeId = null;
+  //     div.classed("hovered", false);
+  //     nodeGroup.classed("hovered", false);
+  //     updateDecisionBoundary(network, false);
+  //     heatMap.updateBackground(boundary[nn.getOutputNode(network).id],
+  //         state.discretize);
+  //   });
+  // if (isInput) {
+  //   div.on("click", function() {
+  //     state[nodeId] = !state[nodeId];
+  //     parametersChanged = true;
+  //     reset();
+  //   });
+  //   div.style("cursor", "pointer");
+  // }
+  // if (isInput) {
+  //   div.classed(activeOrNotClass, true);
+  // }
+  // let nodeHeatMap = new HeatMap(RECT_SIZE, DENSITY / 10, xDomain,
+  //     xDomain, div, {noSvg: true});
+  // div.datum({heatmap: nodeHeatMap, id: nodeId});
 
 }
 
@@ -562,6 +568,7 @@ function drawNetwork(network: nn.Node[][]): void {
   let layerScale = d3.scale.ordinal<number, number>()
       .domain(d3.range(1, numLayers - 1))
       .rangePoints([featureWidth, width - RECT_SIZE], 0.7);
+  console.log("layerScale: ", layerScale)
   let nodeIndexScale = (nodeIndex: number) => nodeIndex * (RECT_SIZE + 25);
 
 
@@ -573,12 +580,14 @@ function drawNetwork(network: nn.Node[][]): void {
   // Draw the input layer separately.
   let cx = RECT_SIZE / 2 + 50;
   let nodeIds = Object.keys(INPUTS);
+  console.log("nodeIds: ", nodeIds)
   let maxY = nodeIndexScale(nodeIds.length);
   nodeIds.forEach((nodeId, i) => {
     let cy = nodeIndexScale(i) + RECT_SIZE / 2;
     node2coord[nodeId] = {cx, cy};
     drawNode(cx, cy, nodeId, true, container);
   });
+  console.log("node2coord: ", node2coord)
 
   // Draw the intermediate layers.
   for (let layerIdx = 1; layerIdx < numLayers - 1; layerIdx++) {
@@ -667,35 +676,35 @@ function addPlusMinusControl(x: number, layerIdx: number) {
 
   let i = layerIdx - 1;
   let firstRow = div.append("div").attr("class", `ui-numNodes${layerIdx}`);
-  firstRow.append("button")
-      .attr("class", "mdl-button mdl-js-button mdl-button--icon")
-      .on("click", () => {
-        let numNeurons = state.networkShape[i];
-        if (numNeurons >= 8) {
-          return;
-        }
-        state.networkShape[i]++;
-        parametersChanged = true;
-        reset();
-      })
-    .append("i")
-      .attr("class", "material-icons")
-      .text("add");
+  // firstRow.append("button")
+  //     .attr("class", "mdl-button mdl-js-button mdl-button--icon")
+  //     .on("click", () => {
+  //       let numNeurons = state.networkShape[i];
+  //       if (numNeurons >= 8) {
+  //         return;
+  //       }
+  //       state.networkShape[i]++;
+  //       parametersChanged = true;
+  //       reset();
+  //     })
+  //   .append("i")
+  //     .attr("class", "material-icons")
+  //     .text("add");
 
-  firstRow.append("button")
-      .attr("class", "mdl-button mdl-js-button mdl-button--icon")
-      .on("click", () => {
-        let numNeurons = state.networkShape[i];
-        if (numNeurons <= 1) {
-          return;
-        }
-        state.networkShape[i]--;
-        parametersChanged = true;
-        reset();
-      })
-    .append("i")
-      .attr("class", "material-icons")
-      .text("remove");
+  // firstRow.append("button")
+  //     .attr("class", "mdl-button mdl-js-button mdl-button--icon")
+  //     .on("click", () => {
+  //       let numNeurons = state.networkShape[i];
+  //       if (numNeurons <= 1) {
+  //         return;
+  //       }
+  //       state.networkShape[i]--;
+  //       parametersChanged = true;
+  //       reset();
+  //     })
+  //   .append("i")
+  //     .attr("class", "material-icons")
+  //     .text("remove");
 
   let suffix = state.networkShape[i] > 1 ? "s" : "";
   div.append("div").text(
@@ -858,14 +867,14 @@ function updateUI(firstStep = false) {
   updateDecisionBoundary(network, firstStep);
   let selectedId = selectedNodeId != null ?
       selectedNodeId : nn.getOutputNode(network).id;
-  heatMap.updateBackground(boundary[selectedId], state.discretize);
+  // heatMap.updateBackground(boundary[selectedId], state.discretize);
 
-  // Update all decision boundaries.
-  d3.select("#network").selectAll("div.canvas")
-      .each(function(data: {heatmap: HeatMap, id: string}) {
-    data.heatmap.updateBackground(reduceMatrix(boundary[data.id], 10),
-        state.discretize);
-  });
+  // // Update all decision boundaries.
+  // d3.select("#network").selectAll("div.canvas")
+  //     .each(function(data: {heatmap: HeatMap, id: string}) {
+  //   data.heatmap.updateBackground(reduceMatrix(boundary[data.id], 10),
+  //       state.discretize);
+  // });
 
   function zeroPad(n: number): string {
     let pad = "000000";
@@ -1057,8 +1066,8 @@ function generateData(firstTime = false) {
   let splitIndex = Math.floor(data.length * state.percTrainData / 100);
   trainData = data.slice(0, splitIndex);
   testData = data.slice(splitIndex);
-  heatMap.updatePoints(trainData);
-  heatMap.updateTestPoints(state.showTestData ? testData : []);
+  // heatMap.updatePoints(trainData);
+  // heatMap.updateTestPoints(state.showTestData ? testData : []);
 }
 
 let firstInteraction = true;
@@ -1087,7 +1096,7 @@ function simulationStarted() {
   parametersChanged = false;
 }
 
-drawDatasetThumbnails();
+// drawDatasetThumbnails();
 makeGUI();
 generateData(true);
 reset(true);
