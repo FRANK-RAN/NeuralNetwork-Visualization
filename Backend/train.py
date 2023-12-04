@@ -37,6 +37,12 @@ class SimpleNet(nn.Module):
             x.register_hook(get_gradient('fc3_grad'))
         return x
 
+def get_layer_order(model):
+    layer_order = ['input']
+    for name, _ in model.named_children():
+        layer_order.append(name)
+    return layer_order
+
 # Function to register forward hook
 def get_activation(name):
     def hook(model, input, output):
@@ -82,6 +88,8 @@ def get_network_shape(model):
 
 # Instantiate the model
 model = SimpleNet()
+
+
 
 
 
@@ -153,12 +161,15 @@ for epoch in range(num_epochs):
             averaged_activation_data = {key: value.mean(dim=0).numpy().tolist() for key, value in activations.items()}
             averaged_activation_data_shape = {key: list(value.mean(dim=0).size()) for key, value in activations.items()}
 
+            layer_order = get_layer_order(model)
+
             data_to_send = {
                 "activations": averaged_activation_data,
                 "activations_shape": averaged_activation_data_shape,
                 "gradients": gradient_data,
                 "gradients_shape": gradients_data_shape,
-                "loss": loss.item()  # Include the loss
+                "loss": loss.item(),  # Include the loss
+                "layer_order": layer_order
             }
 
             requests.post("http://localhost:8000/trainingdata/", json=data_to_send)
