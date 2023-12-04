@@ -1,9 +1,21 @@
 {
   "compilerOptions": {
-    "module": "commonjs",
-    "removeComments": true,
-    "preserveConstEnums": true
+    "target": "es6", // Ensure it's set to ES6 or higher
+    "module": "ESNext",
+    "lib": ["es2019", "dom"],
+    "esModuleInterop": true,
+    // "resolveJsonModule": true,
+    // "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "baseUrl": "./",
+    "paths": {
+      "*": ["src/*"]
+    }
   },
+  // "parserOptions": {
+  //   "sourceType": "module",
+  //   "allowImportExportEverywhere": true
+  // },
   "exclude": [
     "node_modules" 
   ]

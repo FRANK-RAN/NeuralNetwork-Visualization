@@ -33,12 +33,13 @@ limitations under the License.
   <meta name="twitter:image" content="http://playground.tensorflow.org/preview.png">
   <meta name="twitter:image:width" content="560">
   <meta name="twitter:image:height" content="295">
-
+  
   <meta name="author" content="Daniel Smilkov and Shan Carter">
   <title>A Neural Network Playground</title>
   <link rel="stylesheet" href="bundle.css" type="text/css">
   <!-- <link rel="stylesheet" type="text/css" href="styles.css" /> -->
   <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500|Material+Icons" rel="stylesheet" type="text/css">
+  <script src="https://d3js.org/d3.v7.min.js"></script>
   <script src="lib.js"></script>
 </head>
 <body>
@@ -271,6 +272,19 @@ limitations under the License.
         <div id="linechart"></div>
       </div>
       <div id="heatmap"></div>
+      <div id="heatmap"></div>
+
+      <!-- Activation Heatmap Container -->
+      <div id="activationsContainer">
+        <h4>Activations Heatmap</h4>
+        <!-- The activations heatmap will be rendered here -->
+      </div>
+
+      <!-- Gradient Heatmap Container -->
+      <div id="gradientsContainer">
+        <h4>Gradients Heatmap</h4>
+        <!-- The gradients heatmap will be rendered here -->
+      </div>
       <div style="float:left;margin-top:20px">
         <div style="display:flex; align-items:center;">
 

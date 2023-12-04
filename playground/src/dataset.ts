@@ -56,7 +56,7 @@ export function classifyTwoGaussData(numSamples: number, noise: number):
     Example2D[] {
   let points: Example2D[] = [];
 
-  let varianceScale = d3.scale.linear().domain([0, .5]).range([0.5, 4]);
+  let varianceScale = d3.scaleLinear().domain([0, .5]).range([0.5, 4]);
   let variance = varianceScale(noise);
 
   function genGauss(cx: number, cy: number, label: number) {
@@ -75,7 +75,7 @@ export function classifyTwoGaussData(numSamples: number, noise: number):
 export function regressPlane(numSamples: number, noise: number):
   Example2D[] {
   let radius = 6;
-  let labelScale = d3.scale.linear()
+  let labelScale = d3.scaleLinear()
     .domain([-10, 10])
     .range([-1, 1]);
   let getLabel = (x, y) => labelScale(x + y);
@@ -96,7 +96,7 @@ export function regressGaussian(numSamples: number, noise: number):
   Example2D[] {
   let points: Example2D[] = [];
 
-  let labelScale = d3.scale.linear()
+  let labelScale = d3.scaleLinear()
     .domain([0, 2])
     .range([1, 0])
     .clamp(true);

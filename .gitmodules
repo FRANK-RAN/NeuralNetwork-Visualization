@@ -1,0 +1,3 @@
+[submodule "Backend/pytorch-summary"]
+	path = Backend/pytorch-summary
+	url = https://github.com/sksq96/pytorch-summary

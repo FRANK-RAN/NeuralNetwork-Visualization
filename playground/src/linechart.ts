@@ -46,11 +46,11 @@ export class AppendingLineChart {
     let width = totalWidth - margin.left - margin.right;
     let height = totalHeight - margin.top - margin.bottom;
 
-    this.xScale = d3.scale.linear()
+    this.xScale = d3.scaleLinear()
       .domain([0, 0])
       .range([0, width]);
 
-    this.yScale = d3.scale.linear()
+    this.yScale = d3.scaleLinear()
       .domain([0, 0])
       .range([height, 0]);
 
@@ -98,7 +98,7 @@ export class AppendingLineChart {
     this.yScale.domain([this.minY, this.maxY]);
     // Adjust all the <path> elements (lines).
     let getPathMap = (lineIndex: number) => {
-      return d3.svg.line<{x: number, y:number}>()
+      return d3.line<{x: number, y:number}>()
       .x(d => this.xScale(d.x))
       .y(d => this.yScale(d.y[lineIndex]));
     };
