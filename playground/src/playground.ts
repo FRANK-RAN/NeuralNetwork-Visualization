@@ -63,13 +63,14 @@ interface InputFeature {
 }
 
 let INPUTS: {[name: string]: InputFeature} = {
-  "x": {f: (x, y) => x, label: "X_1"},
-  "y": {f: (x, y) => y, label: "X_2"},
-  "xSquared": {f: (x, y) => x * x, label: "X_1^2"},
-  "ySquared": {f: (x, y) => y * y,  label: "X_2^2"},
-  "xTimesY": {f: (x, y) => x * y, label: "X_1X_2"},
-  "sinX": {f: (x, y) => Math.sin(x), label: "sin(X_1)"},
-  "sinY": {f: (x, y) => Math.sin(y), label: "sin(X_2)"},
+  "x": {f: (x, y) => x, label: null},
+  // "x": {f: (x, y) => x, label: "X_1"},
+  // "y": {f: (x, y) => y, label: "X_2"},
+  // "xSquared": {f: (x, y) => x * x, label: "X_1^2"},
+  // "ySquared": {f: (x, y) => y * y,  label: "X_2^2"},
+  // "xTimesY": {f: (x, y) => x * y, label: "X_1X_2"},
+  // "sinX": {f: (x, y) => Math.sin(x), label: "sin(X_1)"},
+  // "sinY": {f: (x, y) => Math.sin(y), label: "sin(X_2)"},
 };
 
 let HIDABLE_CONTROLS = [
@@ -720,27 +721,27 @@ function updateHoverCard(type: HoverType, nodeOrLink?: nn.Node | nn.Link,
     d3.select("#svg").on("click", null);
     return;
   }
-  d3.select("#svg").on("click", () => {
-    hovercard.select(".value").style("display", "none");
-    let input = hovercard.select("input");
-    input.style("display", null);
-    input.on("input", function() {
-      if (this.value != null && this.value !== "") {
-        if (type === HoverType.WEIGHT) {
-          (nodeOrLink as nn.Link).weight = +this.value;
-        } else {
-          (nodeOrLink as nn.Node).bias = +this.value;
-        }
-        updateUI();
-      }
-    });
-    input.on("keypress", () => {
-      if ((d3.event as any).keyCode === 13) {
-        updateHoverCard(type, nodeOrLink, coordinates);
-      }
-    });
-    (input.node() as HTMLInputElement).focus();
-  });
+  // d3.select("#svg").on("click", () => {
+  //   hovercard.select(".value").style("display", "none");
+  //   let input = hovercard.select("input");
+  //   input.style("display", null);
+  //   input.on("input", function() {
+  //     if (this.value != null && this.value !== "") {
+  //       if (type === HoverType.WEIGHT) {
+  //         (nodeOrLink as nn.Link).weight = +this.value;
+  //       } else {
+  //         (nodeOrLink as nn.Node).bias = +this.value;
+  //       }
+  //       updateUI();
+  //     }
+  //   });
+  //   input.on("keypress", () => {
+  //     if ((d3.event as any).keyCode === 13) {
+  //       updateHoverCard(type, nodeOrLink, coordinates);
+  //     }
+  //   });
+  //   (input.node() as HTMLInputElement).focus();
+  // });
   let value = (type === HoverType.WEIGHT) ?
     (nodeOrLink as nn.Link).weight :
     (nodeOrLink as nn.Node).bias;
@@ -948,6 +949,9 @@ export function getOutputWeights(network: nn.Node[][]): number[] {
 }
 
 function reset(onStartup=false) {
+  getGradients();
+  getActivations();
+
   lineChart.reset();
   state.serialize();
   if (!onStartup) {
@@ -1094,6 +1098,18 @@ function simulationStarted() {
     eventLabel: state.tutorial == null ? '' : state.tutorial
   });
   parametersChanged = false;
+}
+
+function getGradients() {
+  d3.json('http://localhost:8000/gradients/', function(data) {
+    console.log("gradients: ", data);
+  });
+}
+
+function getActivations() {
+  d3.json('http://localhost:8000/activations/', function(data) {
+    console.log("activations: ", data);
+  });
 }
 
 // drawDatasetThumbnails();

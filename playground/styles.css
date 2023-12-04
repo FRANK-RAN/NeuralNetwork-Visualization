@@ -589,11 +589,12 @@ g.column rect {
 .features.column {
   width: 10%;
   position: relative;
+  text-align: center;
+  padding-top: 50px !important;
 }
 
 .features.column .plus-minus-neurons {
   position: absolute;
-  text-align: center;
   line-height: 28px;
   top: -58px;
   width: 65px;
