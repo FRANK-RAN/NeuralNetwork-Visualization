@@ -11,7 +11,7 @@ import requests
 class SimpleNet(nn.Module):
     def __init__(self):
         super(SimpleNet, self).__init__()
-        self.fc1 = nn.Linear(10*10, 16)
+        self.fc1 = nn.Linear(7*7, 16)
         self.relu1 = nn.ReLU()
         self.fc2 = nn.Linear(16, 4)
         self.relu2 = nn.ReLU()
@@ -19,7 +19,7 @@ class SimpleNet(nn.Module):
         self.register_hooks = True  # Flag to control hook registration
 
     def forward(self, x):
-        x = x.view(-1, 10*10)
+        x = x.view(-1, 7*7)
         x = self.fc1(x)
         if self.register_hooks:
             x.register_hook(get_gradient('fc1_grad'))
@@ -108,7 +108,7 @@ optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 # Load MNIST dataset
 # Update your transform to include resizing
 transform = transforms.Compose([
-    transforms.Resize((10, 10)),  # Resize the images to 10x10
+    transforms.Resize((7, 7)),  # Resize the images to 10x10
     transforms.ToTensor(),
     transforms.Normalize((0.5,), (0.5,))
 ])
