@@ -1,27 +1,24 @@
 from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework import viewsets
-from .models import Activation, Gradient
-from .serializers import ActivationSerializer, GradientSerializer
+from .models import TrainingData
 
-class ActivationViewSet(viewsets.ModelViewSet):
-    queryset = Activation.objects.all()
-    serializer_class = ActivationSerializer
 
-    def create(self, request, *args, **kwargs):
-        Activation.objects.all().delete()  # Delete existing records
-        serializer = self.get_serializer(data=request.data)  # Create a new record
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data)
+from rest_framework import viewsets
+from .models import TrainingData
+from .serializers import TrainingDataSerializer
 
-class GradientViewSet(viewsets.ModelViewSet):
-    queryset = Gradient.objects.all()
-    serializer_class = GradientSerializer
+class TrainingDataViewSet(viewsets.ModelViewSet):
+    queryset = TrainingData.objects.all()
+    serializer_class = TrainingDataSerializer
+
+    def get_queryset(self):
+        # Order by 'id' in descending order and return only the first record
+        return TrainingData.objects.all().order_by('-id')[:1]
 
     def create(self, request, *args, **kwargs):
-        Gradient.objects.all().delete()  # Delete existing records
-        serializer = self.get_serializer(data=request.data)  # Create a new record
+        # Create a new record with the combined training data
+        serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(serializer.data)

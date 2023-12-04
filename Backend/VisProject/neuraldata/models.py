@@ -1,8 +1,9 @@
 from django.db import models
 
-# Create your models here.
-class Activation(models.Model):
-    data = models.JSONField()
+class TrainingData(models.Model):
+    activations = models.JSONField()
+    activations_shape = models.JSONField()
+    gradients = models.JSONField()
+    gradients_shape = models.JSONField()
+    loss = models.FloatField()  # Loss is a single float value
 
-class Gradient(models.Model):
-    data = models.JSONField()

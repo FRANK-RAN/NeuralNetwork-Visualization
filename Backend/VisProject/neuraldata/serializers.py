@@ -1,12 +1,7 @@
 from rest_framework import serializers
-from .models import Activation, Gradient
+from .models import TrainingData
 
-class ActivationSerializer(serializers.ModelSerializer):
+class TrainingDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Activation
-        fields = '__all__'
-
-class GradientSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Gradient
+        model = TrainingData
         fields = '__all__'

@@ -50,12 +50,39 @@ def get_gradient(name):
         gradients[name] = grad.detach()
     return hook
 
+# Function to get network shape
+def get_network_shape(model):
+    shape = {}
+    first_layer = True
+
+    for name, layer in model.named_children():
+        if isinstance(layer, nn.Linear):
+            # Record input size for the first linear layer
+            if first_layer:
+                shape['input_size'] = layer.in_features
+                first_layer = False
+
+            # Record the number of output features (neurons)
+            shape[name] = layer.out_features
+
+        elif isinstance(layer, nn.ReLU):
+            # Set the size of ReLU layer equal to the size of the last linear layer
+            # This assumes that a ReLU layer follows a linear layer
+            prev_layer = list(model.named_children())[list(model.named_children()).index((name, layer)) - 1][1]
+            if isinstance(prev_layer, nn.Linear):
+                shape[name] = prev_layer.out_features
+            else:
+                shape[name] = 'unknown'
+        else:
+            shape[name] = 'unknown'  # For other types of layers
+
+    return shape
+
 
 
 # Instantiate the model
 model = SimpleNet()
 
-# summary(model, input_size=(1, 28, 28))  # Adjust input_size based on your model's input
 
 
 # Registering forward hooks
@@ -81,8 +108,13 @@ test_loader = DataLoader(test_set, batch_size=32, shuffle=False)
 # Training loop
 num_epochs = 3
 model.register_hooks = True  # Enable hook registration
+
+
 for epoch in range(num_epochs):
     for i, (images, labels) in enumerate(train_loader):
+        activations = {}  # Storage for activations
+
+        activations['input'] = images.view(32, -1).detach()  # Store input images
         # Forward pass
         images.requires_grad = True  # Set requires_grad to True for input images
         outputs = model(images)
@@ -92,6 +124,9 @@ for epoch in range(num_epochs):
         optimizer.zero_grad()
         loss.backward()
 
+        # Storing gradients of input data
+        gradients['input_grad'] = images.grad.view(32, -1).detach()
+
         # Storing gradients of parameters
         for name, parameter in model.named_parameters():
             if parameter.grad is not None:
@@ -99,24 +134,37 @@ for epoch in range(num_epochs):
 
         optimizer.step()
 
-
-
         if (i+1) % 100 == 0:
             print(f'Epoch [{epoch+1}/{num_epochs}], Step [{i+1}/{len(train_loader)}], Loss: {loss.item():.4f}')
-            # Example of sending data (add this inside your training loop)
-            # activation_data = {key: value.numpy().tolist() for key, value in activations.items()}
-            # gradient_data = {key: value.numpy().tolist() for key, value in gradients.items()}
 
-            # requests.post("http://localhost:8000/activations/", json={"data": activation_data})
-            # requests.post("http://localhost:8000/gradients/", json={"data": gradient_data})
-            
-            # Average activations and gradients over the batch and convert to lists
+            gradient_data = {}
+            gradients_data_shape = {}
+
+            for key, value in gradients.items():
+                # Average only the activation gradients (identified by 'grad' in their names)
+                if 'grad' in key:
+                    gradient_data[key] = value.mean(dim=0).numpy().tolist()
+                    gradients_data_shape[key] = list(value.mean(dim=0).size())
+                else:
+                    gradient_data[key] = value.numpy().tolist()
+                    gradients_data_shape[key] = list(value.size())
+                    
+                    
             averaged_activation_data = {key: value.mean(dim=0).numpy().tolist() for key, value in activations.items()}
-            averaged_gradient_data = {key: value.mean(dim=0).numpy().tolist() for key, value in gradients.items()}
+            averaged_activation_data_shape = {key: list(value.mean(dim=0).size()) for key, value in activations.items()}
 
-            # Post the averaged data
-            requests.post("http://localhost:8000/activations/", json={"data": averaged_activation_data})
-            requests.post("http://localhost:8000/gradients/", json={"data": averaged_gradient_data})
+            data_to_send = {
+                "activations": averaged_activation_data,
+                "activations_shape": averaged_activation_data_shape,
+                "gradients": gradient_data,
+                "gradients_shape": gradients_data_shape,
+                "loss": loss.item()  # Include the loss
+            }
+
+            requests.post("http://localhost:8000/trainingdata/", json=data_to_send)
+
+
+
 # Test the model
 model.eval()  # Set the model to evaluation mode
 model.register_hooks = False  # Disable hook registration

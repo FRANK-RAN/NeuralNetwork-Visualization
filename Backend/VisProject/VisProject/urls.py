@@ -16,11 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 from rest_framework import routers
-from neuraldata.views import ActivationViewSet, GradientViewSet
+# from neuraldata.views import ActivationViewSet, GradientViewSet, TrainingDataViewSet
+from neuraldata.views import TrainingDataViewSet
 
 router = routers.DefaultRouter()
-router.register(r'activations', ActivationViewSet)
-router.register(r'gradients', GradientViewSet)
+router.register(r'trainingdata', TrainingDataViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
