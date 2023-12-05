@@ -161,7 +161,20 @@ for epoch in range(num_epochs):
                 else:
                     gradient_data[key] = value.numpy().tolist()
                     gradients_data_shape[key] = list(value.size())
-                    
+            
+            # Test the model
+            model.eval()  # Set the model to evaluation mode
+            model.register_hooks = False  # Disable hook registration
+            with torch.no_grad():
+                correct = 0
+                total = 0
+                for images, labels in test_loader:
+                    outputs = model(images)
+                    _, predicted = torch.max(outputs.data, 1)
+                    total += labels.size(0)
+                    correct += (predicted == labels).sum().item()
+                test_loss = criterion(outputs, labels)
+                print(f'Accuracy of the model on the 10000 test images: {100 * correct / total} %')
                     
             averaged_activation_data = {key: value.mean(dim=0).numpy().tolist() for key, value in activations.items()}
             averaged_activation_data_shape = {key: list(value.mean(dim=0).size()) for key, value in activations.items()}
@@ -174,29 +187,9 @@ for epoch in range(num_epochs):
                 "gradients": gradient_data,
                 "gradients_shape": gradients_data_shape,
                 "loss": loss.item(),  # Include the loss
-                "layer_order": layer_order
+                "layer_order": layer_order,
+                "test_loss": test_loss.item()  # Include the test loss
             }
 
             requests.post("http://localhost:8000/trainingdata/", json=data_to_send)
-
-
-
-# Test the model
-model.eval()  # Set the model to evaluation mode
-model.register_hooks = False  # Disable hook registration
-with torch.no_grad():
-    correct = 0
-    total = 0
-    for images, labels in test_loader:
-        outputs = model(images)
-        _, predicted = torch.max(outputs.data, 1)
-        total += labels.size(0)
-        correct += (predicted == labels).sum().item()
-
-    print(f'Accuracy of the model on the 10000 test images: {100 * correct / total} %')
-
-print('Finished Training and Testing')
-
-
-
 

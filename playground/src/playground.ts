@@ -123,6 +123,7 @@ class Player {
       this.callback(this.isPlaying);
     }
     this.start(this.timerIndex);
+    d3.select("#iter-number").text("Listening...");
     intervalId = setInterval(oneStep, 100);
   }
 
@@ -132,6 +133,7 @@ class Player {
     if (this.callback) {
       this.callback(this.isPlaying);
     }
+    d3.select("#iter-number").text("");
     clearInterval(intervalId);
   }
 
@@ -913,7 +915,6 @@ function updateUI(firstStep = false) {
   // Update loss and iteration number.
   d3.select("#loss-train").text(humanReadable(lossTrain));
   d3.select("#loss-test").text(humanReadable(lossTest));
-  d3.select("#iter-number").text(addCommas(zeroPad(iter)));
   lineChart.addDataPoint([lossTrain, lossTest]);
 }
 
@@ -953,7 +954,7 @@ function oneStep(): void {
   // lossTrain = getLoss(network, trainData);
   // lossTest = getLoss(network, testData);
   lossTrain = DATA[0].loss;
-  lossTest = 0;
+  lossTest = DATA[0].test_loss;
   updateUI();
 }
 
