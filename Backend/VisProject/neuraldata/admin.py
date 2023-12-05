@@ -1,6 +1,6 @@
 from django.contrib import admin
-from .models import NeuralNetworkModel
+from .models import NeuralNetwork
 
 # Register your models here.
 
-admin.site.register(NeuralNetworkModel)
+admin.site.register(NeuralNetwork)

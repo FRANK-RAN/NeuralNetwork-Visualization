@@ -5,7 +5,7 @@ from rest_framework.decorators import api_view
 from rest_framework import viewsets
 from django.core.files.base import ContentFile
 import pickle
-from .models import NeuralNetworkModel
+from .models import NeuralNetwork
 
 import torch
 import torch.nn as nn
@@ -193,7 +193,7 @@ def init_model(request):
     # Store the shapes of the tensors for later reconstruction
     activations_shape = json.dumps(list(activations.shape))
     gradients_shape = json.dumps(list(gradients.shape))
-    nn_model = NeuralNetworkModel(
+    nn_model = NeuralNetwork(
         name="model1", 
         state_dict=memoryview(state_dict),
         activations=activations_json,
@@ -208,7 +208,7 @@ def init_model(request):
 @api_view(['GET'])
 def train_model(request):
     # Retrieve the model state_dict from the database
-    nn_model = NeuralNetworkModel.objects.get(name="model1")
+    nn_model = NeuralNetwork.objects.get(name="model1")
     state_dict = pickle.loads(nn_model.state_dict)
     # Instantiate the model and load the state_dict
     model = SimpleNet()

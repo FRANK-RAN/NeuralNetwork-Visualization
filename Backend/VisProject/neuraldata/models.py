@@ -1,6 +1,6 @@
 from django.db import models
 
-class NeuralNetworkModel(models.Model):
+class NeuralNetwork(models.Model):
     name = models.CharField(max_length=100)
     state_dict = models.BinaryField()
     activations = models.JSONField(default=list)
