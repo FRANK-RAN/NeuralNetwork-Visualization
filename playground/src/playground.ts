@@ -124,7 +124,7 @@ class Player {
     }
     this.start(this.timerIndex);
     d3.select("#iter-number").text("Listening...");
-    intervalId = setInterval(oneStep, 100);
+    intervalId = setInterval(oneStep, 500);
   }
 
   pause() {
@@ -870,14 +870,14 @@ function updateDecisionBoundary(network: nn.Node[][], firstTime: boolean) {
 }
 
 function getLoss(network: nn.Node[][], dataPoints: Example2D[]): number {
-  let loss = 0;
+  // let loss = 0;
   // for (let i = 0; i < dataPoints.length; i++) {
   //   let dataPoint = dataPoints[i];
   //   let input = constructInput(dataPoint.x, dataPoint.y);
   //   let output = nn.forwardProp(network, input);
   //   loss += nn.Errors.SQUARE.error(output, dataPoint.label);
   // }
-  return loss / dataPoints.length;
+  return 2.2;
 }
 
 function updateUI(firstStep = false) {
