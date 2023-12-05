@@ -31,6 +31,7 @@ import * as d3 from 'd3';
 
 let mainWidth;
 let DATA;
+let intervalId;
 
 // More scrolling
 d3.select(".more button").on("click", function() {
@@ -122,6 +123,7 @@ class Player {
       this.callback(this.isPlaying);
     }
     this.start(this.timerIndex);
+    intervalId = setInterval(oneStep, 500);
   }
 
   pause() {
@@ -130,6 +132,7 @@ class Player {
     if (this.callback) {
       this.callback(this.isPlaying);
     }
+    clearInterval(intervalId);
   }
 
   private start(localTimerIndex: number) {
@@ -431,7 +434,6 @@ function drawNode(color: number=1, cx: number, cy: number, nodeId: string, isInp
     container, node?: nn.Node) {
   let x = cx - RECT_SIZE / 2;
   let y = cy - RECT_SIZE / 2;
-      console.log("color: ", color)
   let nodeGroup = container.append("g")
     .attr({
       "class": "node",
@@ -550,7 +552,7 @@ function drawNode(color: number=1, cx: number, cy: number, nodeId: string, isInp
 
 // Draw network
 function drawNetwork(network: nn.Node[][]): void {
-  console.log("network: ", network)
+  // console.log("network: ", network)
   getData();
   var layers = ['input', 'fc1', 'fc2', 'fc3']
   let svg = d3.select("#svg");
@@ -1123,7 +1125,7 @@ function simulationStarted() {
 
 function getData() {
   d3.json('http://localhost:8000/trainingdata/', function(data) {
-    console.log("data: ", data);
+    // console.log("data: ", data);
     DATA = data;
   });
 }

@@ -182,9 +182,9 @@ export class Link {
     this.source = source;
     this.dest = dest;
     this.regularization = regularization;
-    if (initZero) {
+    // if (initZero) {
       this.weight = 0;
-    }
+    // }
   }
 }
 
