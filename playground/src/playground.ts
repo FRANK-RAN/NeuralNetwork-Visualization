@@ -553,7 +553,6 @@ function drawNode(color: number=1, cx: number, cy: number, nodeId: string, isInp
 // Draw network
 function drawNetwork(network: nn.Node[][]): void {
   // console.log("network: ", network)
-  getData();
   var layers = ['input', 'fc1', 'fc2', 'fc3']
   let svg = d3.select("#svg");
   // Remove all svg elements.
@@ -938,7 +937,7 @@ function constructInput(x: number, y: number): number[] {
 }
 
 function oneStep(): void {
-  getData();
+  train();
   iter++;
   nn.updateWeights(network, state.learningRate, state.regularizationRate, DATA);
   // trainData.forEach((point, i) => {
@@ -973,7 +972,7 @@ export function getOutputWeights(network: nn.Node[][]): number[] {
 }
 
 function reset(onStartup=false) {
-  getData();
+  init();
 
   lineChart.reset();
   state.serialize();
@@ -1123,10 +1122,16 @@ function simulationStarted() {
   parametersChanged = false;
 }
 
-function getData() {
-  d3.json('http://localhost:8000/trainingdata/', function(data) {
+function train() {
+  d3.json('http://localhost:8000/train/', function(data) {
     // console.log("data: ", data);
     DATA = data;
+  });
+}
+
+function init() {
+  d3.json('http://localhost:8000/init/', function(data) {
+    console.log("data: ", data);
   });
 }
 

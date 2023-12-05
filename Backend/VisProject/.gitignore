@@ -1,3 +1,8 @@
 # ignore the db file
 db.sqlite3
-```
+
+# ignore the data folder
+data/
+
+# ignore all the pycache folders
+./neualdata/__pycache__/

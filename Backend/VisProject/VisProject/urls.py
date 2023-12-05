@@ -15,14 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import include, path
-from rest_framework import routers
-# from neuraldata.views import ActivationViewSet, GradientViewSet, TrainingDataViewSet
-from neuraldata.views import TrainingDataViewSet
+from neuraldata import views
 
-router = routers.DefaultRouter()
-router.register(r'trainingdata', TrainingDataViewSet)
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include(router.urls)),
+    path('init/', views.init_model),
+    path('train/', views.train_model),
 ]
