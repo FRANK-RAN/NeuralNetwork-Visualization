@@ -6,6 +6,7 @@ from rest_framework import viewsets
 from django.core.files.base import ContentFile
 import pickle
 from .models import NeuralNetwork
+import json
 
 import torch
 import torch.nn as nn
@@ -61,6 +62,8 @@ def get_activation(name):
 # Function to register backward hook
 def get_gradient(name):
     def hook(grad):
+        nn_model = NeuralNetwork.objects.get(name="model"+str(NeuralNetwork.objects.count()))
+        gradients = json.loads(nn_model.gradients)
         gradients[name] = grad.detach()
     return hook
 
@@ -111,7 +114,7 @@ def init():
     
     return model, activations, gradients
 
-def train(model, activations, gradients, criterion, optimizer, train_loader):
+def train(model, activations, gradients, criterion, optimizer, train_loader, test_loader):
     for i, (images, labels) in enumerate(train_loader):
         activations = {}  # Storage for activations
 
@@ -163,6 +166,7 @@ def train(model, activations, gradients, criterion, optimizer, train_loader):
                     total += labels.size(0)
                     correct += (predicted == labels).sum().item()
                 test_loss = criterion(outputs, labels).item()
+                accurracy = correct / total
                 print(f'Accuracy of the model on the 10000 test images: {100 * accurracy} %')
                     
                     
@@ -186,21 +190,15 @@ def train(model, activations, gradients, criterion, optimizer, train_loader):
 @api_view(['GET'])
 def init_model(request):
     model, activations, gradients = init()
-    state_dict = pickle.dumps(model.state_dict())
-    # Convert tensors to JSON format
-    activations_json = json.dumps(activations.tolist())
-    gradients_json = json.dumps(gradients.tolist())
-    # Store the shapes of the tensors for later reconstruction
-    activations_shape = json.dumps(list(activations.shape))
-    gradients_shape = json.dumps(list(gradients.shape))
-    nn_model = NeuralNetwork(
-        name="model1", 
-        state_dict=memoryview(state_dict),
-        activations=activations_json,
-        activations_shape=activations_shape,
-        gradients=gradients_json,
-        gradients_shape=gradients_shape
-    )
+    
+    # Save the model, activations, and gradients to the database
+    ## name the model as "model"+str(NeuralNetwork.objects.count()+1)
+    nn_model = NeuralNetwork(name="model"+str(NeuralNetwork.objects.count()+1))
+    nn_model.state_dict = pickle.dumps(model.state_dict())
+    nn_model.activations = json.dumps(activations)
+    nn_model.activations_shape = json.dumps(get_network_shape(model))
+    nn_model.gradients = json.dumps(gradients)
+    nn_model.gradients_shape = json.dumps(get_network_shape(model))
     nn_model.save()
     
     return Response({"message": "Model initialized."})
@@ -208,11 +206,13 @@ def init_model(request):
 @api_view(['GET'])
 def train_model(request):
     # Retrieve the model state_dict from the database
-    nn_model = NeuralNetwork.objects.get(name="model1")
+    nn_model = NeuralNetwork.objects.get(name="model"+str(NeuralNetwork.objects.count()))
     state_dict = pickle.loads(nn_model.state_dict)
     # Instantiate the model and load the state_dict
     model = SimpleNet()
     model.load_state_dict(state_dict)
+    activations = json.loads(nn_model.activations)
+    gradients = json.loads(nn_model.gradients)
     # Registering forward hooks
     criterion = torch.nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
@@ -227,5 +227,5 @@ def train_model(request):
     test_set = datasets.MNIST(root='./data', train=False, download=True, transform=transform)
     test_loader = DataLoader(test_set, batch_size=32, shuffle=False)
     # Train the model for one epoch
-    data = train(model, activations, gradients, criterion, optimizer, train_loader)
+    data = train(model, activations, gradients, criterion, optimizer, train_loader, test_loader)
     return Response(data)

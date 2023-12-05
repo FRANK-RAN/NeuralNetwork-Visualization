@@ -340,7 +340,7 @@ export function updateWeights(network: Node[][], learningRate: number,
     for (let i = 0; i < currentLayer.length; i++) {
       let node = currentLayer[i];
       // Update the node's bias.
-      node.bias = DATA[0].gradients[layers[layerIdx-1]+".bias"][i];
+      node.bias = DATA?DATA[0].gradients[layers[layerIdx-1]+".bias"][i]:node.bias;
       // if (node.numAccumulatedDers > 0) {
       //   node.bias -= learningRate * node.accInputDer / node.numAccumulatedDers;
       //   node.accInputDer = 0;
@@ -349,7 +349,7 @@ export function updateWeights(network: Node[][], learningRate: number,
       // Update the weights coming into this node.
       for (let j = 0; j < node.inputLinks.length; j++) {
         let link = node.inputLinks[j];
-        link.weight = DATA[0].gradients[layers[layerIdx-1]+".weight"][i][j];
+        link.weight = DATA?DATA[0].gradients[layers[layerIdx-1]+".weight"][i][j]:link.weight;
       //   if (link.isDead) {
       //     continue;
       //   }

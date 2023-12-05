@@ -123,7 +123,7 @@ class Player {
       this.callback(this.isPlaying);
     }
     this.start(this.timerIndex);
-    intervalId = setInterval(oneStep, 100);
+    oneStep()
   }
 
   pause() {
@@ -951,7 +951,7 @@ function oneStep(): void {
   // Compute the loss.
   // lossTrain = getLoss(network, trainData);
   // lossTest = getLoss(network, testData);
-  lossTrain = DATA[0].loss;
+  lossTrain = DATA?DATA[0].loss:0;
   lossTest = 0;
   updateUI();
 }
@@ -1124,7 +1124,7 @@ function simulationStarted() {
 
 function train() {
   d3.json('http://localhost:8000/train/', function(data) {
-    // console.log("data: ", data);
+    console.log("data: ", data);
     DATA = data;
   });
 }
