@@ -123,7 +123,7 @@ class Player {
       this.callback(this.isPlaying);
     }
     this.start(this.timerIndex);
-    intervalId = setInterval(oneStep, 500);
+    intervalId = setInterval(oneStep, 100);
   }
 
   pause() {
