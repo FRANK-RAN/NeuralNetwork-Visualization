@@ -30,6 +30,7 @@ import {AppendingLineChart} from "./linechart";
 import * as d3 from 'd3';
 
 let mainWidth;
+let DATA;
 
 // More scrolling
 d3.select(".more button").on("click", function() {
@@ -47,7 +48,7 @@ function scrollTween(offset) {
   };
 }
 
-const RECT_SIZE = 30;
+const RECT_SIZE = 20;
 const BIAS_SIZE = 5;
 const NUM_SAMPLES_CLASSIFY = 500;
 const NUM_SAMPLES_REGRESS = 1200;
@@ -166,6 +167,10 @@ let colorScale = d3.scale.linear<string, number>()
                      .domain([-1, 0, 1])
                      .range(["#f59322", "#e8eaeb", "#0877bd"])
                      .clamp(true);
+let greyScale = d3.scale.linear<string, number>()
+                      .domain([0, 1])
+                      .range(["#ffffff", "#000000"])
+                      .clamp(true);
 let iter = 0;
 let trainData: Example2D[] = [];
 let testData: Example2D[] = [];
@@ -245,43 +250,43 @@ function makeGUI() {
   // d3.select(`canvas[data-regDataset=${regDatasetKey}]`)
   //   .classed("selected", true);
 
-  d3.select("#add-layers").on("click", () => {
-    if (state.numHiddenLayers >= 6) {
-      return;
-    }
-    state.networkShape[state.numHiddenLayers] = 2;
-    state.numHiddenLayers++;
-    parametersChanged = true;
-    reset();
-  });
+  // d3.select("#add-layers").on("click", () => {
+  //   if (state.numHiddenLayers >= 6) {
+  //     return;
+  //   }
+  //   state.networkShape[state.numHiddenLayers] = 2;
+  //   state.numHiddenLayers++;
+  //   parametersChanged = true;
+  //   reset();
+  // });
 
-  d3.select("#remove-layers").on("click", () => {
-    if (state.numHiddenLayers <= 0) {
-      return;
-    }
-    state.numHiddenLayers--;
-    state.networkShape.splice(state.numHiddenLayers);
-    parametersChanged = true;
-    reset();
-  });
+  // d3.select("#remove-layers").on("click", () => {
+  //   if (state.numHiddenLayers <= 0) {
+  //     return;
+  //   }
+  //   state.numHiddenLayers--;
+  //   state.networkShape.splice(state.numHiddenLayers);
+  //   parametersChanged = true;
+  //   reset();
+  // });
 
-  let showTestData = d3.select("#show-test-data").on("change", function() {
-    state.showTestData = this.checked;
-    state.serialize();
-    userHasInteracted();
-    heatMap.updateTestPoints(state.showTestData ? testData : []);
-  });
-  // Check/uncheck the checkbox according to the current state.
-  showTestData.property("checked", state.showTestData);
+  // let showTestData = d3.select("#show-test-data").on("change", function() {
+  //   state.showTestData = this.checked;
+  //   state.serialize();
+  //   userHasInteracted();
+  //   heatMap.updateTestPoints(state.showTestData ? testData : []);
+  // });
+  // // Check/uncheck the checkbox according to the current state.
+  // showTestData.property("checked", state.showTestData);
 
-  let discretize = d3.select("#discretize").on("change", function() {
-    state.discretize = this.checked;
-    state.serialize();
-    userHasInteracted();
-    updateUI();
-  });
-  // Check/uncheck the checbox according to the current state.
-  discretize.property("checked", state.discretize);
+  // let discretize = d3.select("#discretize").on("change", function() {
+  //   state.discretize = this.checked;
+  //   state.serialize();
+  //   userHasInteracted();
+  //   updateUI();
+  // });
+  // // Check/uncheck the checbox according to the current state.
+  // discretize.property("checked", state.discretize);
 
   // let percTrain = d3.select("#percTrainData").on("input", function() {
   //   state.percTrainData = this.value;
@@ -313,55 +318,55 @@ function makeGUI() {
   // noise.property("value", state.noise);
   // d3.select("label[for='noise'] .value").text(state.noise);
 
-  let batchSize = d3.select("#batchSize").on("input", function() {
-    state.batchSize = this.value;
-    d3.select("label[for='batchSize'] .value").text(this.value);
-    parametersChanged = true;
-    reset();
-  });
-  batchSize.property("value", state.batchSize);
-  d3.select("label[for='batchSize'] .value").text(state.batchSize);
+  // let batchSize = d3.select("#batchSize").on("input", function() {
+  //   state.batchSize = this.value;
+  //   d3.select("label[for='batchSize'] .value").text(this.value);
+  //   parametersChanged = true;
+  //   reset();
+  // });
+  // batchSize.property("value", state.batchSize);
+  // d3.select("label[for='batchSize'] .value").text(state.batchSize);
 
-  let activationDropdown = d3.select("#activations").on("change", function() {
-    state.activation = activations[this.value];
-    parametersChanged = true;
-    reset();
-  });
-  activationDropdown.property("value",
-      getKeyFromValue(activations, state.activation));
+  // let activationDropdown = d3.select("#activations").on("change", function() {
+  //   state.activation = activations[this.value];
+  //   parametersChanged = true;
+  //   reset();
+  // });
+  // activationDropdown.property("value",
+  //     getKeyFromValue(activations, state.activation));
 
-  let learningRate = d3.select("#learningRate").on("change", function() {
-    state.learningRate = +this.value;
-    state.serialize();
-    userHasInteracted();
-    parametersChanged = true;
-  });
-  learningRate.property("value", state.learningRate);
+  // let learningRate = d3.select("#learningRate").on("change", function() {
+  //   state.learningRate = +this.value;
+  //   state.serialize();
+  //   userHasInteracted();
+  //   parametersChanged = true;
+  // });
+  // learningRate.property("value", state.learningRate);
 
-  let regularDropdown = d3.select("#regularizations").on("change",
-      function() {
-    state.regularization = regularizations[this.value];
-    parametersChanged = true;
-    reset();
-  });
-  regularDropdown.property("value",
-      getKeyFromValue(regularizations, state.regularization));
+  // let regularDropdown = d3.select("#regularizations").on("change",
+  //     function() {
+  //   state.regularization = regularizations[this.value];
+  //   parametersChanged = true;
+  //   reset();
+  // });
+  // regularDropdown.property("value",
+  //     getKeyFromValue(regularizations, state.regularization));
 
-  let regularRate = d3.select("#regularRate").on("change", function() {
-    state.regularizationRate = +this.value;
-    parametersChanged = true;
-    reset();
-  });
-  regularRate.property("value", state.regularizationRate);
+  // let regularRate = d3.select("#regularRate").on("change", function() {
+  //   state.regularizationRate = +this.value;
+  //   parametersChanged = true;
+  //   reset();
+  // });
+  // regularRate.property("value", state.regularizationRate);
 
-  let problem = d3.select("#problem").on("change", function() {
-    state.problem = problems[this.value];
-    generateData();
-    drawDatasetThumbnails();
-    parametersChanged = true;
-    reset();
-  });
-  problem.property("value", getKeyFromValue(problems, state.problem));
+  // let problem = d3.select("#problem").on("change", function() {
+  //   state.problem = problems[this.value];
+  //   generateData();
+  //   drawDatasetThumbnails();
+  //   parametersChanged = true;
+  //   reset();
+  // });
+  // problem.property("value", getKeyFromValue(problems, state.problem));
 
   // Add scale to the gradient color map.
   let x = d3.scale.linear().domain([-1, 1]).range([0, 144]);
@@ -397,12 +402,12 @@ function makeGUI() {
 
 function updateBiasesUI(network: nn.Node[][]) {
   nn.forEachNode(network, true, node => {
-    d3.select(`rect#bias-${node.id}`).style("fill", colorScale(node.bias));
+    d3.select(`rect#bias-${node.id}`).style("fill", colorScale(node.bias*100));
   });
 }
 
 function updateWeightsUI(network: nn.Node[][], container) {
-  console.log(network)
+  // console.log(network)
   for (let layerIdx = 1; layerIdx < network.length; layerIdx++) {
     let currentLayer = network[layerIdx];
     // Update all the nodes in this layer.
@@ -414,7 +419,7 @@ function updateWeightsUI(network: nn.Node[][], container) {
             .style({
               "stroke-dashoffset": -iter / 3,
               "stroke-width": linkWidthScale(Math.abs(link.weight)),
-              "stroke": colorScale(link.weight)
+              "stroke": colorScale(link.weight * 10)
             })
             .datum(link);
       }
@@ -422,11 +427,11 @@ function updateWeightsUI(network: nn.Node[][], container) {
   }
 }
 
-function drawNode(cx: number, cy: number, nodeId: string, isInput: boolean,
+function drawNode(color: number=1, cx: number, cy: number, nodeId: string, isInput: boolean,
     container, node?: nn.Node) {
   let x = cx - RECT_SIZE / 2;
   let y = cy - RECT_SIZE / 2;
-
+      console.log("color: ", color)
   let nodeGroup = container.append("g")
     .attr({
       "class": "node",
@@ -446,8 +451,9 @@ function drawNode(cx: number, cy: number, nodeId: string, isInput: boolean,
     .attr({
       cx: RECT_SIZE / 2,
       cy: RECT_SIZE / 2,
-      r: RECT_SIZE / 2
-    });
+      r: RECT_SIZE / 2,
+    }).attr("id", "circle"+nodeId)
+  container.select(`#circle${nodeId}`).style("fill", greyScale(color));
   let activeOrNotClass = state[nodeId] ? "active" : "inactive";
   if (isInput) {
     let label = INPUTS[nodeId].label != null ?
@@ -544,6 +550,9 @@ function drawNode(cx: number, cy: number, nodeId: string, isInput: boolean,
 
 // Draw network
 function drawNetwork(network: nn.Node[][]): void {
+  console.log("network: ", network)
+  getData();
+  var layers = ['input', 'fc1', 'fc2', 'fc3']
   let svg = d3.select("#svg");
   // Remove all svg elements.
   svg.select("g.core").remove();
@@ -569,7 +578,7 @@ function drawNetwork(network: nn.Node[][]): void {
   let layerScale = d3.scale.ordinal<number, number>()
       .domain(d3.range(1, numLayers - 1))
       .rangePoints([featureWidth, width - RECT_SIZE], 0.7);
-  console.log("layerScale: ", layerScale)
+  // console.log("layerScale: ", layerScale)
   let nodeIndexScale = (nodeIndex: number) => nodeIndex * (RECT_SIZE + 25);
 
 
@@ -578,29 +587,37 @@ function drawNetwork(network: nn.Node[][]): void {
   let idWithCallout = null;
   let targetIdWithCallout = null;
 
-  // Draw the input layer separately.
+  // // Draw the input layer separately.
   let cx = RECT_SIZE / 2 + 50;
-  let nodeIds = Object.keys(INPUTS);
-  console.log("nodeIds: ", nodeIds)
-  let maxY = nodeIndexScale(nodeIds.length);
-  nodeIds.forEach((nodeId, i) => {
-    let cy = nodeIndexScale(i) + RECT_SIZE / 2;
-    node2coord[nodeId] = {cx, cy};
-    drawNode(cx, cy, nodeId, true, container);
-  });
-  console.log("node2coord: ", node2coord)
+  // let nodeIds = Object.keys(INPUTS);
+  // console.log("nodeIds: ", nodeIds)
+  let maxY = nodeIndexScale(49);
+  // nodeIds.forEach((nodeId, i) => {
+  //   let cy = nodeIndexScale(i) + RECT_SIZE / 2;
+  //   node2coord[nodeId] = {cx, cy};
+  //   drawNode(cx, cy, nodeId, true, container);
+  // });
 
   // Draw the intermediate layers.
-  for (let layerIdx = 1; layerIdx < numLayers - 1; layerIdx++) {
+  for (let layerIdx = 0; layerIdx < numLayers - 1; layerIdx++) {
     let numNodes = network[layerIdx].length;
-    let cx = layerScale(layerIdx) + RECT_SIZE / 2;
+    if (layerIdx === 0) {
+      cx = RECT_SIZE / 2 + 50;
+    } else {
+      cx = layerScale(layerIdx) + RECT_SIZE / 2;
+    }
     maxY = Math.max(maxY, nodeIndexScale(numNodes));
     addPlusMinusControl(layerScale(layerIdx), layerIdx);
     for (let i = 0; i < numNodes; i++) {
       let node = network[layerIdx][i];
       let cy = nodeIndexScale(i) + RECT_SIZE / 2;
       node2coord[node.id] = {cx, cy};
-      drawNode(cx, cy, node.id, false, container, node);
+      let color = DATA?(Math.abs(DATA[0].gradients[layers[layerIdx]+"_grad"][i]) * 1000+0.2)/4:0.2;
+      drawNode(color, cx, cy, node.id, false, container, node);
+
+      if (layerIdx == 0) {
+        continue;
+      }
 
       // Show callout to thumbnails.
       let numNodes = network[layerIdx].length;
@@ -675,7 +692,7 @@ function addPlusMinusControl(x: number, layerIdx: number) {
     .classed("plus-minus-neurons", true)
     .style("left", `${x - 10}px`);
 
-  let i = layerIdx - 1;
+  let i = layerIdx;
   let firstRow = div.append("div").attr("class", `ui-numNodes${layerIdx}`);
   // firstRow.append("button")
   //     .attr("class", "mdl-button mdl-js-button mdl-button--icon")
@@ -707,9 +724,9 @@ function addPlusMinusControl(x: number, layerIdx: number) {
   //     .attr("class", "material-icons")
   //     .text("remove");
 
-  let suffix = state.networkShape[i] > 1 ? "s" : "";
+  let suffix = [49, 16, 4, 10][i] > 1 ? "s" : "";
   div.append("div").text(
-    state.networkShape[i] + " neuron" + suffix
+    [49, 16, 4, 10][i] + " neuron" + suffix
   );
 }
 
@@ -850,22 +867,23 @@ function updateDecisionBoundary(network: nn.Node[][], firstTime: boolean) {
 
 function getLoss(network: nn.Node[][], dataPoints: Example2D[]): number {
   let loss = 0;
-  for (let i = 0; i < dataPoints.length; i++) {
-    let dataPoint = dataPoints[i];
-    let input = constructInput(dataPoint.x, dataPoint.y);
-    let output = nn.forwardProp(network, input);
-    loss += nn.Errors.SQUARE.error(output, dataPoint.label);
-  }
+  // for (let i = 0; i < dataPoints.length; i++) {
+  //   let dataPoint = dataPoints[i];
+  //   let input = constructInput(dataPoint.x, dataPoint.y);
+  //   let output = nn.forwardProp(network, input);
+  //   loss += nn.Errors.SQUARE.error(output, dataPoint.label);
+  // }
   return loss / dataPoints.length;
 }
 
 function updateUI(firstStep = false) {
+  drawNetwork(network);
   // Update the links visually.
   updateWeightsUI(network, d3.select("g.core"));
   // Update the bias values visually.
   updateBiasesUI(network);
   // Get the decision boundary of the network.
-  updateDecisionBoundary(network, firstStep);
+  // updateDecisionBoundary(network, firstStep);
   let selectedId = selectedNodeId != null ?
       selectedNodeId : nn.getOutputNode(network).id;
   // heatMap.updateBackground(boundary[selectedId], state.discretize);
@@ -918,18 +936,22 @@ function constructInput(x: number, y: number): number[] {
 }
 
 function oneStep(): void {
+  getData();
   iter++;
-  trainData.forEach((point, i) => {
-    let input = constructInput(point.x, point.y);
-    nn.forwardProp(network, input);
-    nn.backProp(network, point.label, nn.Errors.SQUARE);
-    if ((i + 1) % state.batchSize === 0) {
-      nn.updateWeights(network, state.learningRate, state.regularizationRate);
-    }
-  });
+  nn.updateWeights(network, state.learningRate, state.regularizationRate, DATA);
+  // trainData.forEach((point, i) => {
+  //   let input = constructInput(point.x, point.y);
+  //   nn.forwardProp(network, input);
+  //   nn.backProp(network, point.label, nn.Errors.SQUARE);
+  //   if ((i + 1) % state.batchSize === 0) {
+  //     nn.updateWeights(network, state.learningRate, state.regularizationRate, DATA);
+  //   }
+  // });
   // Compute the loss.
-  lossTrain = getLoss(network, trainData);
-  lossTest = getLoss(network, testData);
+  // lossTrain = getLoss(network, trainData);
+  // lossTest = getLoss(network, testData);
+  lossTrain = DATA[0].loss;
+  lossTest = 0;
   updateUI();
 }
 
@@ -949,8 +971,7 @@ export function getOutputWeights(network: nn.Node[][]): number[] {
 }
 
 function reset(onStartup=false) {
-  getGradients();
-  getActivations();
+  getData();
 
   lineChart.reset();
   state.serialize();
@@ -966,7 +987,7 @@ function reset(onStartup=false) {
   // Make a simple network.
   iter = 0;
   let numInputs = constructInput(0 , 0).length;
-  let shape = [numInputs].concat(state.networkShape).concat([1]);
+  let shape = [49, 16, 4, 10, 1];
   let outputActivation = (state.problem === Problem.REGRESSION) ?
       nn.Activations.LINEAR : nn.Activations.TANH;
   network = nn.buildNetwork(shape, state.activation, outputActivation,
@@ -1100,15 +1121,10 @@ function simulationStarted() {
   parametersChanged = false;
 }
 
-function getGradients() {
-  d3.json('http://localhost:8000/gradients/', function(data) {
-    console.log("gradients: ", data);
-  });
-}
-
-function getActivations() {
-  d3.json('http://localhost:8000/activations/', function(data) {
-    console.log("activations: ", data);
+function getData() {
+  d3.json('http://localhost:8000/trainingdata/', function(data) {
+    console.log("data: ", data);
+    DATA = data;
   });
 }
 
