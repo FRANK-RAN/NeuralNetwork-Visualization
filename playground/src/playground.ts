@@ -122,8 +122,9 @@ class Player {
     if (this.callback) {
       this.callback(this.isPlaying);
     }
-    this.start(this.timerIndex);
+    // this.start(this.timerIndex);
     d3.select("#iter-number").text("Listening...");
+    clearInterval(intervalId);
     intervalId = setInterval(oneStep, 500);
   }
 
@@ -142,7 +143,8 @@ class Player {
       if (localTimerIndex < this.timerIndex) {
         return true;  // Done.
       }
-      oneStep();
+      clearInterval(intervalId);
+      intervalId = setInterval(oneStep, 500);
       return false;  // Not done.
     }, 0);
   }
@@ -209,7 +211,6 @@ function makeGUI() {
     if (iter === 0) {
       simulationStarted();
     }
-    oneStep();
   });
 
   // d3.select("#data-regen-button").on("click", () => {
@@ -1110,8 +1111,8 @@ function userHasInteracted() {
   if (state.tutorial != null && state.tutorial !== '') {
     page = `/v/tutorials/${state.tutorial}`;
   }
-  ga('set', 'page', page);
-  ga('send', 'pageview', {'sessionControl': 'start'});
+  // ga('set', 'page', page);
+  // ga('send', 'pageview', {'sessionControl': 'start'});
 }
 
 function simulationStarted() {
